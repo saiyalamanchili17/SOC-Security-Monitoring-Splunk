@@ -1,0 +1,59 @@
+# SOC INCIDENT INVESTIGATION REPORT
+
+**Incident ID:** INC-001  
+**Incident Title:** Possible Brute-Force Login Followed by Success  
+**Date:** November 11, 2026  
+**Severity:** Medium (Lab Assessment)  
+**Status:** Investigation Completed — Simulated Scenario  
+**Tool Used:** Splunk Enterprise 10.6.1.1
+
+## 1. Incident Summary
+
+During a simulated security monitoring exercise, suspicious authentication activity was identified involving the administrator account.
+
+Five failed login attempts were recorded from source IP address 192.168.1.50, followed by one successful login from the same IP address and account.
+
+The activity was detected using a Splunk SPL correlation search and a scheduled alert.
+
+## 2. Evidence Collected
+
+- Source IP: 192.168.1.50
+- Target Account: admin
+- Failed Login Events: 5 (Event ID 4625)
+- Successful Login Events: 1 (Event ID 4624)
+- First Failed Login: 09:00:00
+- Last Failed Login: 09:00:40
+- Successful Login: 09:01:00
+- Log Source: Simulated Windows authentication CSV dataset
+
+## 3. Investigation Findings
+
+The authentication timeline shows repeated failed login attempts within 40 seconds, followed by a successful authentication 20 seconds later.
+
+This pattern is consistent with possible password guessing or brute-force activity.
+
+The available evidence does not establish whether the successful login was unauthorized.
+
+## 4. Detection and Alerting
+
+A Splunk correlation search identified accounts and source IP addresses with at least five failed logins and one successful login.
+
+A scheduled alert named "SOC - Possible Brute Force Login" was configured and successfully triggered during testing.
+
+The triggered alert returned the expected detection result.
+
+## 5. Recommended Response
+
+1. Verify whether the administrator login was authorized.
+2. Review additional endpoint and authentication logs.
+3. Escalate suspicious activity to a senior SOC analyst.
+4. If compromise is suspected, follow approved account containment procedures.
+5. Continue monitoring the source IP for additional suspicious activity.
+
+## 6. Conclusion
+
+The simulated incident demonstrated log ingestion, SPL-based threat detection, event correlation, scheduled alerting, dashboard monitoring, and incident investigation documentation using Splunk Enterprise.
+
+**Final Assessment:** Possible brute-force activity followed by successful authentication. No confirmed account compromise.
+
+**Note:** All authentication events were simulated for educational purposes.

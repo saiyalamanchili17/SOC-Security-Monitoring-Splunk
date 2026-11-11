@@ -1,0 +1,41 @@
+
+# SOC Security Monitoring - Splunk SPL Queries
+# Dataset: Simulated Windows authentication events
+# Index: soc_lab
+
+# 1. Total Failed Login Attempts
+index=soc_lab EventCode=4625
+| stats count as Failed_Logins
+
+
+# 2. Total Successful Logins
+index=soc_lab EventCode=4624
+| stats count as Successful_Logins
+
+
+# 3. Suspicious Source IP Detection
+index=soc_lab EventCode=4625
+| stats count as Failed_Attempts by Source_IP
+| where Failed_Attempts >= 3
+| sort - Failed_Attempts
+
+
+# 4. Account Lockout Detection
+index=soc_lab EventCode=4740
+| stats count as Account_Lockouts
+
+
+# 5. Possible Brute Force Followed by Success
+index=soc_lab (EventCode=4624 OR EventCode=4625)
+| stats count(eval(EventCode=4625)) as Failed_Logins
+        count(eval(EventCode=4624)) as Successful_Logins
+        by Account_Name Source_IP
+| where Failed_Logins>=5 AND Successful_Logins>=1
+| eval Detection="Possible Brute Force Followed by Success"
+| table Account_Name Source_IP Failed_Logins Successful_Logins Detection
+
+
+# 6. Authentication Event Timeline
+index=soc_lab Source_IP="192.168.1.50"
+| table _time EventCode Account_Name Source_IP Status
+| sort _time
